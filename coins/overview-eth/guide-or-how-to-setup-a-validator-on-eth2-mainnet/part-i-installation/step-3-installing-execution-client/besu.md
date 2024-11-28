@@ -3,20 +3,20 @@
 ## Overview
 
 {% hint style="info" %}
-**Hyperledger Besu** is an open-source Ethereum client designed for demanding enterprise applications requiring secure, high-performance transaction processing in a private network. It's developed under the Apache 2.0 license and written in **Java**.
+**Hyperledger Besu** es un cliente de Ethereum de código abierto diseñado para aplicaciones empresariales exigentes que requieren un procesamiento de transacciones seguro y de alto rendimiento en una red privada. Está desarrollado bajo la licencia Apache 2.0 y escrito en **Java**.
 {% endhint %}
 
-#### Official Links
+#### Enlaces Oficiales
 
-| Subject       | Link                                                                                         |
+| Tema          | Link                                                                                         |
 | ------------- | -------------------------------------------------------------------------------------------- |
-| Releases      | [https://github.com/hyperledger/besu/releases](https://github.com/hyperledger/besu/releases) |
-| Documentation | [https://besu.hyperledger.org](https://besu.hyperledger.org/en/stable/)                      |
-| Website       | [https://www.hyperledger.org/use/besu](https://www.hyperledger.org/use/besu)                 |
+| Lanzamientos  | [https://github.com/hyperledger/besu/releases](https://github.com/hyperledger/besu/releases) |
+| Documentación | [https://besu.hyperledger.org](https://besu.hyperledger.org/en/stable/)                      |
+| Sitio Web     | [https://www.hyperledger.org/use/besu](https://www.hyperledger.org/use/besu)                 |
 
-### 1. Initial configuration
+### 1. Configuración inicial
 
-Create a service user for the execution service, create data directory and assign ownership.
+Cree un usuario de servicio para el servicio de ejecución, cree un directorio de datos y asigne la propiedad.
 
 ```bash
 sudo adduser --system --no-create-home --group execution
@@ -24,29 +24,29 @@ sudo mkdir -p /var/lib/besu
 sudo chown -R execution:execution /var/lib/besu
 ```
 
-Install dependencies.
+Instalar dependencias.
 
 ```bash
 sudo apt install -y openjdk-21-jdk libjemalloc-dev jq
 ```
 
-### 2. Install Binaries
+### 2. Instalar Binarios
 
-* Downloading binaries is often faster and more convenient.
-* Building from source code can offer better compatibility and is more aligned with the spirit of FOSS (free open source software).
+* Descargar archivos binarios suele ser más rápido y cómodo.
+* Construir a partir de código fuente puede ofrecer una mejor compatibilidad y está más alineado con el espíritu de FOSS (software gratuito de código abierto).
 
 <details>
 
 <summary>Option 1 - Download binaries</summary>
 
-Run the following to automatically download the latest linux release, un-tar and cleanup.
+Ejecute lo siguiente para descargar automáticamente la última versión de Linux, descomprimir y limpiar.
 
 ```bash
 RELEASE_URL="https://api.github.com/repos/hyperledger/besu/releases/latest"
 TAG=$(curl -s $RELEASE_URL | jq -r .tag_name)
 BINARIES_URL="https://github.com/hyperledger/besu/releases/download/$TAG/besu-$TAG.tar.gz"
 
-echo Downloading URL: $BINARIES_URL
+echo Descargando URL: $BINARIES_URL
 
 cd $HOME
 wget -O besu.tar.gz $BINARIES_URL
@@ -55,7 +55,7 @@ rm besu.tar.gz
 sudo mv $HOME/besu-* besu
 ```
 
-Install the binaries.
+Instalar los binarios.
 
 <pre class="language-bash"><code class="lang-bash"><strong>sudo mv $HOME/besu /usr/local/bin/besu
 </strong></code></pre>
@@ -64,9 +64,9 @@ Install the binaries.
 
 <details>
 
-<summary>Option 2 - Build from source code</summary>
+<summary>Option 2 - Construir desde el código fuente</summary>
 
-Build the binaries.
+Construye los binarios.
 
 ```bash
 mkdir -p ~/git
@@ -84,34 +84,34 @@ git checkout $latestTag
 ./gradlew installDist
 ```
 
-Verify Besu was properly built by checking the version.
+Verifique que Besu se haya creado correctamente comprobando la versión.
 
 ```shell
 ./build/install/besu/bin/besu --version
 ```
 
-Sample output of a compatible version.
+Salida de muestra de una versión compatible.
 
 ```
 besu/v23.4.0/linux-x86_64/openjdk-java-17
 ```
 
-Install the binaries.
+Instale los binarios.
 
 <pre class="language-shell"><code class="lang-shell"><strong>sudo cp -a $HOME/git/besu/build/install/besu /usr/local/bin/besu
 </strong></code></pre>
 
 </details>
 
-### **3. Setup and configure systemd**
+### **3. Instalar y configurar systemd**
 
-Create a **systemd unit file** to define your `execution.service` configuration.
+Crea un **systemd archivo unitario** para definir tu `execution.service` configuracion.
 
 ```bash
 sudo nano /etc/systemd/system/execution.service
 ```
 
-Paste the following configuration into the file.
+Pegue la siguiente configuración en el archivo.
 
 ```shell
 [Unit]
@@ -150,28 +150,28 @@ WantedBy=multi-user.target
 ```
 
 {% hint style="info" %}
-**Running less than 32GB of RAM?** Deleting the flag, `--Xplugin-rocksdb-high-spec-enabled` is advisable.
+**¿Tiene menos de 32 GB de RAM?** Eliminando la bandera, `--Xplugin-rocksdb-high-spec-enabled` es aconsejable.
 {% endhint %}
 
-To exit and save, press `Ctrl` + `X`, then `Y`, then `Enter`.
+Para salir y guardar, presiona `Ctrl` + `X`, luego `Y`,luego `Enter`.
 
-Run the following to enable auto-start at boot time.
+Ejecute lo siguiente para habilitar el inicio automático en el momento del arranque.
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable execution
 ```
 
-Finally, start your execution layer client and check it's status.
+Finalmente, inicie su cliente de capa de ejecución y verifique su estado.
 
 ```bash
 sudo systemctl start execution
 sudo systemctl status execution
 ```
 
-Press `Ctrl` + `C` to exit the status.
+Presione `Ctrl` + `C` para salir del estado.
 
-### 4. Helpful execution client commands
+### 4. Comandos útiles del cliente de ejecución
 
 {% tabs %}
 {% tab title="View Logs" %}
@@ -179,7 +179,7 @@ Press `Ctrl` + `C` to exit the status.
 sudo journalctl -fu execution | ccze
 ```
 
-A properly functioning **Besu** execution client will indicate "Fork-Choice-Updates". For example,
+Un cliente de ejecución **Besu** que funcione correctamente indicará "Fork-Choice-Updates". Por ejemplo,
 
 ```
 2022-03-19 04:09:36.315+00:00 | vert.x-worker-thread-0 | INFO  | EngineForkchoiceUpdated | Consensus fork-choice-update: head: 0xcd2a_8b32..., finalized: 0xfa22_1142...
@@ -206,11 +206,11 @@ sudo systemctl status execution
 {% endtab %}
 
 {% tab title="Reset Database" %}
-Common reasons to reset the database can include:
+Las razones comunes para restablecer la base de datos pueden incluir:
 
-* Recovering from a corrupted database due to power outage or hardware failure
-* Re-syncing to reduce disk space usage
-* Upgrading to a new storage format
+*  Recuperación de una base de datos dañada debido a un corte de energía o una falla de hardware
+* Resincronización para reducir el uso de espacio en disco
+* Actualización a un nuevo formato de almacenamiento.
 
 ```bash
 sudo systemctl stop execution
@@ -222,8 +222,8 @@ Time to re-sync the execution client can take a few hours up to a day.
 {% endtab %}
 {% endtabs %}
 
-Now that your execution client is configured and started, proceed to the next step on setting up your consensus client.
+Ahora que su cliente de ejecución está configurado e iniciado, continúe con el siguiente paso para configurar su cliente de consenso.
 
 {% hint style="warning" %}
-If you're checking the logs and see any warnings or errors, please be patient as these will normally resolve once both your execution and consensus clients are fully synced to the Ethereum network.
+Si está revisando los registros y ve alguna advertencia o error, tenga paciencia, ya que normalmente se resolverán una vez que tanto su cliente de ejecución como el de consenso estén completamente sincronizados con la red Ethereum.
 {% endhint %}
